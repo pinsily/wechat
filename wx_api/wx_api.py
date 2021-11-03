@@ -2,12 +2,11 @@ import json
 
 import requests
 
-import logging
 from typing import Dict
 
 from settings import pre_settings
 
-logging.basicConfig(level=logging.INFO)
+from settings import logger
 
 
 class WxApi:
@@ -47,14 +46,13 @@ class WxApi:
         """
         token = self.get_access_token()
         if not token:
-            logging.error("获取token失败")
+            logger.error("获取token失败")
             return dict()
 
         url = f"https://api.weixin.qq.com/cgi-bin/user/info?access_token={token}&openid={openid}&lang=zh_CN"
         response = requests.get(url, headers=self.headers)
-        logging.info(response.text)
         result = json.loads(response.text)
-        logging.info(result)
+        logger.info(f"用户信息请求 result=>{result}")
         return dict(result)
 
 
