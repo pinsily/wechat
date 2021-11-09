@@ -16,9 +16,8 @@ timeout = 40
 workers = multiprocessing.cpu_count() * 2 + 1
 # 每个进程开启的线程数
 threads = 2
-#服务器中在pending状态的最大连接数 (建议 64-2048)
+# 服务器中在pending状态的最大连接数 (建议 64-2048)
 backlog = 2048
-
 
 # sync同步, eventlet(并发), gevent（协程, tornado, gthread，此处使用
 worker_class = "uvicorn.workers.UvicornWorker"

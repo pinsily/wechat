@@ -1,5 +1,7 @@
 from typing import Dict
 
+from settings import logger
+
 
 class Event:
     """
@@ -32,7 +34,7 @@ class Event:
         文本消息处理
         :return:
         """
-        return "success"
+        return self.event_data.get("content")
 
     def video_handler(self):
         """
@@ -40,3 +42,24 @@ class Event:
         :return:
         """
         return "success"
+
+    def event_handler(self):
+        """
+        事件接受需要进一步分路由
+        :return:
+        """
+        event = getattr(self, self.event_data.get("event") + "_event_handler", None)
+        if not event:
+            raise AttributeError(f"事件类型不存在, event=>{self.event_data.get('event')}")
+
+        return event()
+
+    def subscribe_event_handler(self):
+        """
+        用户关注事件
+        :return:
+        """
+        # 扫码事件
+        if self.event_data.get("event_key"):
+            logger.info(f"扫码事件， event_key=>{self.event_data.get('event_key')}")
+        return "subscribe"
