@@ -4,6 +4,11 @@ from starlette.staticfiles import StaticFiles
 
 from learning import app01, app04, app05, app06, app07
 from invoker.invoker import invoker
+from wechat import models
+from wechat.database import engine
+
+# 建表，存在会忽略
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="API文档",

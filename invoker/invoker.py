@@ -1,13 +1,19 @@
 import hashlib
+from typing import Dict
 
+from sqlalchemy.orm import Session
+
+from invoker.event_handler import Event
 from utils.xml_utils import xml_to_dict
+from wechat.database import get_db
+from wechat.models import Service
 
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
 
@@ -56,14 +62,20 @@ async def check_signature(
 )
 async def event_handler(
         request: Request,
-        xml_param: str
+        xml_param: str,
+        db:Session = Depends(get_db)
 ):
     logger.info("receive wechat request=>{}")
     # xml转dict
-    event_data = xml_to_dict(xml_param)
+    event_data:Dict = xml_to_dict(xml_param)
+    # origin_id -> service_id
+    service = Service.query_by_origin_id(db, event_data.get("to_user_name", None))
+    if service is not None:
+        event_data.__setattr__("service_id", service.service_id)
+    # else:
+    #     raise
 
-
-    pass
+    return Event(event_data).dispatch()
 
 
 if __name__ == '__main__':

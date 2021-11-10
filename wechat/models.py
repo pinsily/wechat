@@ -31,18 +31,24 @@ class Service(Base):
 
     @classmethod
     def query_by_service_id(cls, db: Session, service_id: int):
+        if not service_id:
+            return None
         return db.query(cls).filter_by(service_id=service_id).first()
 
     @classmethod
     def query_by_app_id(cls, db: Session, app_id: str):
+        if not app_id:
+            return None
         return db.query(cls).filter_by(app_id=app_id).first()
 
     @classmethod
     def query_by_origin_id(cls, db: Session, origin_id: str):
+        if not origin_id:
+            return None
         return db.query(cls).filter_by(origin_id=origin_id).first()
 
     def __repr__(self):
-        return f"Service(service_id={self.service_id}, app_name=>{self.app_name}, app_id={self.app_id}, origin_id=>{self.origin_id})"
+        return f"Service(service_id=>{self.service_id}, app_name=>{self.app_name}, app_id={self.app_id}, origin_id=>{self.origin_id})"
 
     def __str__(self):
         return self.__repr__()
